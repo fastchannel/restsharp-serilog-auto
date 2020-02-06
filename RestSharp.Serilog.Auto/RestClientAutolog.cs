@@ -181,21 +181,17 @@ namespace RestSharp
             properties.Add("ResponseHeaders", this.GetResponseHeaders(response));
             properties.Add("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
 
-            foreach (var property in properties)
+            using (LogContext.Push(new RestClientAutologEnricher(properties,
+                this.GetIgnoredProperties(response.Request), Configuration.PropertiesToDestructure)))
             {
-                if (ignoredProperties.Contains(property.Key) == false)
+                if (response.IsSuccessful)
                 {
-                    LogContext.PushProperty(property.Key, property.Value);
+                    Log.Information(this.Configuration.MessageTemplateForSuccess);
                 }
-            }
-
-            if (response.IsSuccessful)
-            {
-                Log.Information(this.Configuration.MessageTemplateForSuccess);
-            }
-            else
-            {
-                Log.Error(this.Configuration.MessageTemplateForSuccess);
+                else
+                {
+                    Log.Error(this.Configuration.MessageTemplateForSuccess);
+                }
             }
         }
 

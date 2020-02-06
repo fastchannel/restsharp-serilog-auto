@@ -44,6 +44,8 @@ namespace RestSharp
 
         public LoggerConfiguration LoggerConfiguration { get; set; }
 
+        public string[] PropertiesToDestructure { get; set; }
+
         public RestClientAutologConfiguration Clone()
         {
             return (RestClientAutologConfiguration)this.MemberwiseClone();
